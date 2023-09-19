@@ -1,6 +1,7 @@
 import express from 'express';
 import { carService } from './services/car.service.js';
 import { userService } from './services/user.service.js';
+import { loggerService } from './services/logger.service.js'
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
@@ -37,7 +38,7 @@ app.get('/api/car', (req, res) => {
             res.send(cars)
         })
         .catch(err => {
-            console.log('Cannot load cars')
+            loggerService.error('Cannot get cars', err)
             res.status(400).send('Cannot load cars')
         })
 })
@@ -58,7 +59,7 @@ app.post('/api/car', (req, res) => {
             res.send(savedCar)
         })
         .catch(err => {
-            console.log('Cannot add car')
+            loggerService.error('Cannot save car', err)
             res.status(400).send('Cannot add car')
         })
 
@@ -82,7 +83,7 @@ app.put('/api/car', (req, res) => {
             res.send(savedCar)
         })
         .catch(err => {
-            console.log('Cannot update car')
+            loggerService.error('Cannot save car', err)
             res.status(400).send('Cannot update car')
         })
 
@@ -93,7 +94,10 @@ app.get('/api/car/:carId', (req, res) => {
     const { carId } = req.params
     carService.get(carId)
         .then(car => res.send(car))
-        .catch(err => res.status(403).send(err))
+        .catch(err => { 
+            loggerService.error('Cannot get car', err)
+            res.status(403).send(err) 
+        })
 })
 
 // Remove
@@ -107,7 +111,7 @@ app.delete('/api/car/:carId', (req, res) => {
             res.send({ msg, carId })
         })
         .catch(err => {
-            console.log('err:', err)
+            loggerService.error('Cannot remove car', err)
             res.status(400).send('Cannot remove car, ' + err)
         })
 })
@@ -143,7 +147,7 @@ app.post('/api/auth/signup', (req, res) => {
             res.send(user)
         })
         .catch(err => {
-            console.log(err)
+            loggerService.error('Cannot signup', err)
             res.status(401).send('Nope!')
         })
 })
@@ -167,7 +171,7 @@ app.put('/api/user', (req, res) => {
             res.send(savedUser)
         })
         .catch(err => {
-            console.log('Cannot update user')
+            loggerService.error('Cannot update user', err)
             res.status(400).send('Cannot update user')
         })
 
