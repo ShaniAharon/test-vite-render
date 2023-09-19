@@ -1,5 +1,15 @@
-const fs = require('fs')
-var cars = require('../data/car.json')
+import fs from 'fs'
+import { utilService } from './util.service.js'
+
+const cars = utilService.readJsonFile('data/car.json')
+
+export const carService = {
+    query,
+    get,
+    remove,
+    save
+}
+
 
 function query(filterBy = {}) {
     let carsToDisplay = cars
@@ -71,9 +81,3 @@ function _saveCarsToFile() {
     })
 }
 
-module.exports = {
-    query,
-    get,
-    remove,
-    save
-}

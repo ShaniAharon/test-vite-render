@@ -1,11 +1,14 @@
-const fs = require('fs')
-const Cryptr = require('cryptr')
-const cryptr = new Cryptr('secret-puk-1234')
+import fs from 'fs'
+import Cryptr from 'cryptr'
+import { utilService } from './util.service.js'
 
-const users = require('../data/user.json')
+const cryptr = new Cryptr(process.env.SECRET || 'Secret-Puk-1234')
+
+const users = utilService.readJsonFile('data/user.json')
 
 
-module.exports = {
+
+export const userService = {
     query,
     getById,
     remove,
@@ -62,8 +65,13 @@ function remove(userId) {
 }
 
 function save(user) {
-    user._id = _makeId()
-    users.push(user)
+    if(user._id){
+        const userToUpdate = users.find(currUser => currUser._id === user._id)
+        userToUpdate.score = user.score
+    }else {
+        user._id = _makeId()
+        users.push(user)
+    }
     return _saveUsersToFile().then(() => user)
 
 }

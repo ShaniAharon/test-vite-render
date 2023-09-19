@@ -5,6 +5,7 @@
     "start": "node server.js",
     "dev": "nodemon --ignore \"./data\" server.js"
   },
+  "type": "module",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

@@ -1,10 +1,11 @@
-const express = require('express')
-const app = express()
-const carService = require('./services/car.service')
-const userService = require('./services/user.service')
-const cookieParser = require('cookie-parser')
-const path = require('path')
-const cors = require('cors')
+import express from 'express';
+import { carService } from './services/car.service.js';
+import { userService } from './services/user.service.js';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import cors from 'cors';
+
+const app = express();
 
 
 // App Configuration
@@ -152,16 +153,38 @@ app.post('/api/auth/logout', (req, res) => {
     res.send('logged-out!')
 })
 
+app.put('/api/user', (req, res) => {
+    const loggedinUser = userService.validateToken(req.cookies.loginToken)
+    if (!loggedinUser) return res.status(401).send('Cannot update user')
 
-app.get('/**', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+    const { score, _id } = req.body
+    const user = {
+        _id,
+       score: +score
+    }
+     userService.save(user)
+        .then((savedUser) => {
+            res.send(savedUser)
+        })
+        .catch(err => {
+            console.log('Cannot update user')
+            res.status(400).send('Cannot update user')
+        })
+
 })
 
+// app.get('/**', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public', 'index.html'))
+// })
+
+app.get('/**', (req, res) => {
+    res.sendFile(path.resolve('public/index.html'))
+})
 
 // Listen will always be the last line in our server!
 // app.listen(3030, () => console.log('Server listening on port 3030!'))
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3030;
 app.listen(port, () => {
     console.log(`App listening on port ${port}!`)
 });
